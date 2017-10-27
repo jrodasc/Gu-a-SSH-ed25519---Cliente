@@ -9,7 +9,7 @@ Las siguientes instrucciones para generar y cargar manualmente una llave SSH en 
 Una clave SSH consite en un par de archivos.Una es la clave privada, que nunca se debe compartir con nadie. El otro es la clave pública. El otro archivo es una clave pública que le permite iniciar sesión en el servidor. Cuando genere las claves, usará ssh-keygen para almacenar las claves en un lugar seguro, y evitar el inicio de sesión cuando se conecte a las instancias correspondientes.
 
 Para generar llaves SSH en Linux, siga los siguientes pasos:En el equipo local ejecutar el siguiente código
-  ssh-keygen -A
+        ssh-keygen -A
   ssh-keygen -t ed25519
   eval `ssh-agent -s`
   ssh-add
