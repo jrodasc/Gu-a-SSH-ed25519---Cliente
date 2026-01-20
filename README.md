@@ -15,6 +15,13 @@ It is intended for DevOps, Cloud, and Infrastructure engineers who want to reduc
 
 ---
 
+## Prerequisites
+- SSH installed on client and server
+- User with sudo privileges
+- SSH access currently enabled
+
+---
+
 ## 🧠 Why ed25519?
 
 `ed25519` is a modern elliptic-curve algorithm with multiple advantages over traditional RSA keys:
