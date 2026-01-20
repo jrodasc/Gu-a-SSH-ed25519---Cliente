@@ -6,6 +6,15 @@ It is intended for DevOps, Cloud, and Infrastructure engineers who want to reduc
 
 ---
 
+## Table of Contents
+- [Prerequisites](#prerequisites)
+- [Client-Side Setup](#client-side-setup)
+- [Server-Side Hardening](#server-side-hardening)
+- [Fail2Ban](#fail2ban-hardening)
+- [Best Practices](#security-best-practices)
+
+---
+
 ## 🧠 Why ed25519?
 
 `ed25519` is a modern elliptic-curve algorithm with multiple advantages over traditional RSA keys:
