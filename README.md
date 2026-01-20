@@ -1,38 +1,200 @@
-# Gu-a-SSH-ed25519 - Cliente
+# 🔐 SSH Hardening with ed25519 Keys (Client & Server Side)
 
-Guía para acceder por SSH configurando desde el Cliente.
+This repository provides a practical and secure guide to harden SSH access using **ed25519 keys**, covering both **client-side** and **server-side** configurations following modern security best practices.
 
-#### 1. Generar llave SSH manualmente
+It is intended for DevOps, Cloud, and Infrastructure engineers who want to reduce the SSH attack surface on production systems.
 
-Las siguientes instrucciones para generar y cargar manualmente una llave SSH en el equipo local y poder acceder a los Servidores.
+---
 
-Una clave SSH consite en un par de archivos.Una es la clave privada, que nunca se debe compartir con nadie. El otro es la clave pública. El otro archivo es una clave pública que le permite iniciar sesión en el servidor. Cuando genere las claves, usará ssh-keygen para almacenar las claves en un lugar seguro, y evitar el inicio de sesión cuando se conecte a las instancias correspondientes.
+## 🧠 Why ed25519?
 
-Para generar llaves SSH en Linux, siga los siguientes pasos:En el equipo local ejecutar el siguiente código
-    
-    ssh-keygen -A
-    ssh-keygen -t ed25519
-    eval `ssh-agent -s`
-    ssh-add
-    ssh-add ~/.ssh/id_ed25519
+`ed25519` is a modern elliptic-curve algorithm with multiple advantages over traditional RSA keys:
 
-La llave SSH se ha creado, ahora es necesario visualizar dicha llave y enviarlo al
-administrador para que se guarde las credenciales en el servidor y permita el acceso al
-servidor, para dicha acción agregamos la siguiente linea de código en la consola:
+- 🔒 Strong cryptographic security
+- ⚡ Faster authentication
+- 🗜️ Smaller key size
+- ✅ Recommended by modern security standards
 
-    cat ~/.ssh/id_ed25519.pub
-  
-Y mostrará en pantalla una lllave SSH:
-  
-    ssh-ed25519 AAAAC3Nzavrg545t64t34rferodwEv1MMI2+Nh9QxpgrNxb2Is1Cc6 test1
+---
 
-Esa llave debe ser enviado al administrador para que sea ingresado al servidor.
+## 🎯 Purpose
 
-#### 2. Ingresar por SSH al servidor
+The main goals of this guide are to:
 
-Para ingresar por SSH al servidor, es importante mencionar que se va ingresar por el
-puerto 4449, y el comando a utilizar es el siguiente:
+- Secure SSH authentication using modern keys
+- Eliminate weak or legacy access methods
+- Standardize SSH access across environments
+- Provide a repeatable and production-ready setup
 
-    ssh –p 4449 administrador@192.168.10.1
+---
 
-Con eso ya ingresamos al servidor.
+## 🛠️ Technologies & Tools
+
+- Linux
+- OpenSSH
+- ed25519 cryptography
+- SSH client and server configuration
+- Secure server access
+
+---
+
+## 🚀 Client-Side Hardening
+
+### 1️⃣ Generate an ed25519 SSH Key
+
+```bash
+ssh-keygen -t ed25519 -C "your_email@example.com"
+```
+- Use the default location
+- Always protect your key with a strong passphrase
+
+## 2️⃣ Start SSH Agent and Load Key
+
+```bash
+eval "$(ssh-agent -s)"
+ssh-add ~/.ssh/id_ed25519
+```
+
+## 3️⃣ Copy Public Key to Server
+
+```bash
+ssh-copy-id -i ~/.ssh/id_ed25519.pub user@server_ip
+```
+
+## 4️⃣ Configure SSH Client
+
+Edit the SSH client configuration file:
+
+```bash
+nano ~/.ssh/config
+```
+
+Example configuration:
+
+```bash
+Host production-server
+    HostName server_ip
+    User user
+    IdentityFile ~/.ssh/id_ed25519
+    IdentitiesOnly yes
+```
+
+## 5️⃣ Test Connection
+```bash
+ssh production-server
+```
+## 🔐 Server-Side Hardening
+
+⚠️ Always test changes in a separate session before restarting SSH.
+
+---
+
+## 1️⃣ Edit SSH Daemon Configuration
+```bash
+sudo nano /etc/ssh/sshd_config
+```
+
+Apply the following recommended settings:
+
+```bash
+# Disable root login
+PermitRootLogin no
+
+# Disable password authentication
+PasswordAuthentication no
+ChallengeResponseAuthentication no
+
+# Enable public key authentication
+PubkeyAuthentication yes
+
+# Limit authentication attempts
+MaxAuthTries 3
+
+# Disable empty passwords
+PermitEmptyPasswords no
+
+# Use modern crypto
+HostKeyAlgorithms ssh-ed25519
+PubkeyAcceptedAlgorithms ssh-ed25519
+
+# Log level
+LogLevel VERBOSE
+```
+
+## 2️⃣ Restart SSH Service
+```bash
+sudo systemctl restart sshd
+```
+
+Or on some systems:
+
+```bash
+sudo systemctl restart ssh
+```
+
+3️⃣ Validate Configuration
+
+Open a new terminal session and test:
+
+```bash
+ssh user@server_ip
+```
+
+❗ If login fails, do not close your existing session.
+
+🔥 Optional Server Hardening (Recommended)
+🔹 Change Default SSH Port
+
+```bash
+Port 2222
+
+sudo systemctl restart sshd
+```
+🔹 Restrict SSH Access to Specific Users
+
+```bash
+AllowUsers user1 user2
+```
+
+🔹 Firewall Example (UFW)
+```bash
+sudo ufw allow 2222/tcp
+sudo ufw reload
+```
+## 🛡️ Security Best Practices
+
+Use one SSH key per user and per environment
+
+Rotate keys periodically
+
+Remove unused or compromised keys
+
+Never expose private keys
+
+Combine SSH hardening with firewall rules and intrusion prevention tools
+
+## 📌 Use Cases
+
+Securing cloud servers
+
+Standardizing access for DevOps teams
+
+Hardening production environments
+
+Personal and enterprise infrastructure
+
+---
+
+## 👤 Author
+
+Juan Rodas
+DevOps & Cloud Engineer
+
+🔗 LinkedIn: https://linkedin.com/in/juanrodas
+
+---
+⭐ Final Note
+
+SSH hardening is one of the simplest and most effective security improvements you can apply.
+
+Small configuration changes can significantly reduce infrastructure risk.
