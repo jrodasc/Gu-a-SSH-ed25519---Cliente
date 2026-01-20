@@ -142,7 +142,7 @@ ssh user@server_ip
 
 ❗ If login fails, do not close your existing session.
 
-🔥 Optional Server Hardening (Recommended)
+## 🔥 Optional Server Hardening (Recommended)
 🔹 Change Default SSH Port
 
 ```bash
@@ -182,6 +182,89 @@ Standardizing access for DevOps teams
 Hardening production environments
 
 Personal and enterprise infrastructure
+
+---
+
+# 🛡️ Fail2Ban Hardening
+
+Fail2Ban is an intrusion prevention tool that monitors log files and bans IP addresses that show malicious behavior, such as repeated failed SSH login attempts.
+
+It adds an additional security layer on top of SSH hardening and firewall rules.
+
+---
+
+## 📦 Install Fail2Ban
+
+### Debian / Ubuntu
+
+```bash
+sudo apt update
+sudo apt install fail2ban -y
+RHEL / CentOS / Rocky
+sudo dnf install fail2ban -y
+```
+## ⚙️ Basic Configuration
+Fail2Ban should be configured using local override files.
+
+Create Local Configuration
+```bash
+sudo cp /etc/fail2ban/jail.conf /etc/fail2ban/jail.local
+```
+
+Edit the local configuration:
+
+```bash
+sudo nano /etc/fail2ban/jail.local
+```
+## 🔐 Enable SSH Protection
+Locate the [sshd] section and ensure it is enabled:
+
+```bash
+[sshd]
+enabled = true
+port = 2222
+logpath = %(sshd_log)s
+maxretry = 3
+bantime = 1h
+findtime = 10m
+Adjust the port if you changed the default SSH port.
+```
+
+## ▶️ Start and Enable Fail2Ban
+```bash
+sudo systemctl enable fail2ban
+sudo systemctl start fail2ban
+```
+🔍 Verify Fail2Ban Status
+Check Fail2Ban overall status:
+
+```bash
+sudo fail2ban-client status
+```
+Check SSH jail status:
+```bash
+sudo fail2ban-client status sshd
+```
+## 🚫 Unban an IP (if needed)
+```bash
+sudo fail2ban-client set sshd unbanip <IP_ADDRESS>
+```
+
+## 🧠 Best Practices
+Combine Fail2Ban with firewall rules
+
+Monitor banned IPs periodically
+
+Adjust ban times based on security requirements
+
+Avoid overly aggressive bans that may lock out legitimate users
+
+⚠️ Important Notes
+Always whitelist your own IP if working from a fixed location
+
+Test Fail2Ban rules before applying them in production
+
+Keep Fail2Ban updated
 
 ---
 
