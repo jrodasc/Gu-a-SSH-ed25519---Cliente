@@ -11,6 +11,7 @@ It is intended for DevOps, Cloud, and Infrastructure engineers who want to reduc
 - [Client-Side Setup](#client-side-setup)
 - [Server-Side Hardening](#server-side-hardening)
 - [Fail2Ban](#fail2ban-hardening)
+- [Firewall] (#firewall-fardening)
 - [Best Practices](#security-best-practices)
 
 ---
@@ -265,6 +266,74 @@ sudo fail2ban-client status sshd
 ```bash
 sudo fail2ban-client set sshd unbanip <IP_ADDRESS>
 ```
+---
+
+# Firewall
+A firewall is a critical layer of defense that restricts network access to only required services.
+
+This example uses **UFW (Uncomplicated Firewall)**.
+
+## Install UFW
+
+```bash
+sudo apt update
+sudo apt install ufw -y
+```
+
+## Default Policies
+```bash
+sudo ufw default deny incoming
+sudo ufw default allow outgoing
+```
+
+## Allow SSH (custom port example)
+```bash
+sudo ufw allow 2222/tcp
+```
+
+## ⚠️ Make sure SSH is allowed before enabling UFW.
+
+Enable Firewall
+```bash
+sudo ufw enable
+```
+Check Status
+```bash
+sudo ufw status verbose
+```
+
+---
+
+### 📌 UFW and Fail2Ban work together:
+- UFW limits exposed services
+- Fail2Ban blocks malicious IPs attempting brute-force attacks
+
+
+## 🧪 Advanced: iptables 
+
+For low-level control, iptables can be used directly.
+
+### Allow SSH
+
+```bash
+sudo iptables -A INPUT -p tcp --dport 2222 -m conntrack --ctstate NEW,ESTABLISHED -j ACCEPT
+sudo iptables -A OUTPUT -p tcp --sport 2222 -m conntrack --ctstate ESTABLISHED -j ACCEPT
+```
+
+Allow Loopback
+```bash
+sudo iptables -A INPUT -i lo -j ACCEPT
+```
+
+Drop Everything Else
+```bash
+sudo iptables -P INPUT DROP
+sudo iptables -P FORWARD DROP
+```
+
+⚠️ iptables rules are not persistent by default.
+
+---
 
 ## 🧠 Best Practices
 Combine Fail2Ban with firewall rules
