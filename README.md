@@ -11,7 +11,7 @@ It is intended for DevOps, Cloud, and Infrastructure engineers who want to reduc
 - [Client-Side Setup](#client-side-setup)
 - [Server-Side Hardening](#server-side-hardening)
 - [Fail2Ban](#fail2ban-hardening)
-- [Firewall] (#firewall-fardening)
+- [Firewall](#firewall-hardening)
 - [Best Practices](#security-best-practices)
 
 ---
